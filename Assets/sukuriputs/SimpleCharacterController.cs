@@ -1,115 +1,95 @@
 using UnityEngine;
+using UnityEngine.InputSystem; // Input Systemを使用
 
-// 必須コンポーネントとしてCharacterControllerを指定
 [RequireComponent(typeof(CharacterController))]
 public class SimpleCharacterController : MonoBehaviour
 {
     [Header("移動設定")]
-    [Tooltip("歩く速さ")]
-    public float moveSpeed = 5.0f;
-    [Tooltip("振り向く速さ")]
-    public float rotationSpeed = 10.0f;
-    [Tooltip("ジャンプ力")]
+    [Tooltip("連打1回あたりの瞬発力（速さ）")]
+    public float dashSpeed = 8.0f; // 少し速めにしてステップ感を出す
+    [Tooltip("ブレーキの強さ（値が大きいほどすぐ止まる）")]
+    public float brakePower = 15.0f;
+
+    [Header("ジャンプ・重力")]
     public float jumpPower = 5.0f;
-    [Tooltip("重力の強さ")]
     public float gravity = 20.0f;
 
     [Header("アニメーション設定（任意）")]
-    [Tooltip("Animatorコンポーネントがある場合はここに入れる")]
     public Animator animator;
 
     // 内部変数
     private CharacterController characterController;
-    private Vector3 moveDirection = Vector3.zero;
-    private float verticalVelocity; // 垂直方向（重力・ジャンプ）の速度
+    private float currentBackwardSpeed = 0f; // 現在の後退速度
+    private float verticalVelocity; // 重力・ジャンプ用
 
     void Start()
     {
-        // CharacterControllerコンポーネントを取得
         characterController = GetComponent<CharacterController>();
-
-        // Animatorがアタッチされていない場合、自動で取得を試みる
-        if (animator == null)
-        {
-            animator = GetComponent<Animator>();
-        }
+        if (animator == null) animator = GetComponent<Animator>();
     }
 
     void Update()
     {
-        // 地面に接地しているかどうかの判定
         if (characterController.isGrounded)
         {
-            // --- 1. 入力の取得 ---
-            // WASDキー または 矢印キー の入力を取得 (-1.0 ～ 1.0)
-            float horizontalInput = Input.GetAxis("Horizontal"); // 横移動 (A/D, 左/右)
-            float verticalInput = Input.GetAxis("Vertical");     // 前後移動 (W/S, 上/下)
+            // --- 1. 入力判定（押した瞬間だけ反応） ---
+            bool dashInput = false;
+            bool jumpInput = false;
 
-            // --- 2. 移動ベクトルの作成 ---
-            // カメラの向きに関係なく、画面上の「上」を奥、「右」を右として移動する場合
-            Vector3 inputDirection = new Vector3(horizontalInput, 0, verticalInput);
-
-            // 入力がある場合のみ移動処理を行う
-            if (inputDirection.magnitude > 0.1f)
+            if (Keyboard.current != null)
             {
-                // 入力ベクトルを正規化（斜め移動でも速さが変わらないようにする）
-                inputDirection.Normalize();
-
-                // キャラクターの向きを進行方向へスムーズに回転させる
-                Quaternion targetRotation = Quaternion.LookRotation(inputDirection);
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-
-                // 移動方向を決定
-                moveDirection = inputDirection * moveSpeed;
-
-                // --- アニメーション制御 (走る) ---
-                if (animator != null)
+                // Qキー または 下矢印 を「押した瞬間」だけ true
+                if (Keyboard.current.qKey.wasPressedThisFrame || Keyboard.current.downArrowKey.wasPressedThisFrame)
                 {
-                    // "Speed"というパラメータがある場合、移動速度を渡す
-                    // Animator側で Blend Tree を組んでいる場合に有効
-                    animator.SetFloat("Speed", moveDirection.magnitude);
+                    dashInput = true;
+                }
+
+                // スペースキー
+                if (Keyboard.current.spaceKey.wasPressedThisFrame)
+                {
+                    jumpInput = true;
                 }
             }
-            else
-            {
-                // 入力がない場合は停止
-                moveDirection = Vector3.zero;
 
-                // --- アニメーション制御 (待機) ---
-                if (animator != null)
-                {
-                    animator.SetFloat("Speed", 0);
-                }
+            // --- 2. 連打移動ロジック ---
+            if (dashInput)
+            {
+                // ボタンを押した瞬間、速度をセット（上書き）
+                currentBackwardSpeed = dashSpeed;
+            }
+
+            // 毎フレーム、速度を減速させる（0になるまでブレーキをかける）
+            currentBackwardSpeed = Mathf.MoveTowards(currentBackwardSpeed, 0, brakePower * Time.deltaTime);
+
+            // --- アニメーション（速度がある時だけ動かす） ---
+            if (animator != null)
+            {
+                animator.SetFloat("Speed", currentBackwardSpeed);
             }
 
             // --- 3. ジャンプ処理 ---
-            if (Input.GetButtonDown("Jump")) // Spaceキー
+            if (jumpInput)
             {
                 verticalVelocity = jumpPower;
-
-                // ジャンプアニメーションがあればここでトリガー
-                if (animator != null)
-                {
-                    // animator.SetTrigger("Jump"); // 必要であればコメントアウトを外す
-                }
             }
             else
             {
-                // 接地しているときは垂直速度をリセット（少し下向きに力をかけて接地を安定させる）
-                verticalVelocity = -2f;
+                verticalVelocity = -2f; // 接地安定化
             }
         }
 
-        // --- 4. 重力の適用 ---
-        // 空中にいる間、重力分だけ下向きの速度を加算し続ける
+        // --- 4. 最終的な移動計算 ---
+
+        // 重力適用
         verticalVelocity -= gravity * Time.deltaTime;
 
-        // 重力・ジャンプの速度を移動ベクトルに合成
-        Vector3 finalMove = moveDirection;
+        // 後ろ方向(Vector3.back) に 現在の速度を掛ける
+        Vector3 finalMove = Vector3.back * currentBackwardSpeed;
+
+        // 上下方向の速度を適用
         finalMove.y = verticalVelocity;
 
-        // --- 5. 最終的な移動 ---
-        // CharacterControllerを使って移動させる（Time.deltaTimeを掛けてフレームレート依存を防ぐ）
+        // 移動実行
         characterController.Move(finalMove * Time.deltaTime);
     }
 }
