@@ -47,7 +47,6 @@ public class SimpleCharacterController : MonoBehaviour
     // 色変更・点滅用
     private Renderer[] myRenderers;
     private Dictionary<Renderer, Color> originalColors = new Dictionary<Renderer, Color>();
-    private readonly string[] colorPropertyNames = { "_Color", "_BaseColor" };
 
     void Start()
     {
@@ -67,15 +66,19 @@ public class SimpleCharacterController : MonoBehaviour
         {
             if (r is ParticleSystemRenderer) continue;
 
-            foreach (var propName in colorPropertyNames)
+            // ★修正：プロパティ名の判定をやめ、単純にmaterial.colorを取得・保存する
+            // 多くのシェーダーで標準的に色が取れます
+            if (!originalColors.ContainsKey(r))
             {
-                if (r.material.HasProperty(propName))
+                // エラー回避のため、念のためTry-Catchで囲む（色が取れないマテリアル対策）
+                try
                 {
-                    if (!originalColors.ContainsKey(r))
-                    {
-                        originalColors.Add(r, r.material.GetColor(propName));
-                    }
-                    break;
+                    originalColors.Add(r, r.material.color);
+                }
+                catch
+                {
+                    // 色プロパティがない場合は白などを仮に入れておくか無視する
+                    originalColors.Add(r, Color.white);
                 }
             }
         }
@@ -178,16 +181,9 @@ public class SimpleCharacterController : MonoBehaviour
             {
                 Renderer r = kvp.Key;
                 Color originalCol = kvp.Value;
-                Color targetColor = useStunColor ? stunColor : originalCol;
 
-                foreach (var propName in colorPropertyNames)
-                {
-                    if (r.material.HasProperty(propName))
-                    {
-                        r.material.SetColor(propName, targetColor);
-                        break;
-                    }
-                }
+                // ★修正：単純に .color プロパティへ代入する
+                r.material.color = useStunColor ? stunColor : originalCol;
             }
 
             // 次回のためにフラグを反転
@@ -205,15 +201,7 @@ public class SimpleCharacterController : MonoBehaviour
         {
             Renderer r = kvp.Key;
             Color col = kvp.Value;
-
-            foreach (var propName in colorPropertyNames)
-            {
-                if (r.material.HasProperty(propName))
-                {
-                    r.material.SetColor(propName, col);
-                    break;
-                }
-            }
+            r.material.color = col;
         }
     }
 

@@ -36,9 +36,9 @@ public class ResultColorController : MonoBehaviour
         }
         else
         {
-            if (GameResultData.FinalRank != null && GameResultData.FinalRank.Length == 4)
+            if (GameResultData.FinalRank != null && GameResultData.FinalRank.Count == 4)
             {
-                SetResultColors(GameResultData.FinalRank);
+                SetResultColors(GameResultData.FinalRank.ToArray());
             }
         }
     }

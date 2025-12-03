@@ -49,7 +49,7 @@ public class SceneFlowManager : MonoBehaviour
     {
         // 1. データを保存場所(GameResultData)に渡す
         // ※GameResultDataクラスが存在する必要があります
-        GameResultData.FinalRank = finalRanking;
+        
 
         // 2. リザルトシーンを読み込む
         SceneManager.LoadScene(resultSceneName);
