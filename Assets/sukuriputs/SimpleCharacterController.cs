@@ -22,6 +22,8 @@ public class SimpleCharacterController : MonoBehaviour
     private float currentBackwardSpeed = 0f; // 現在の後退速度
     private float verticalVelocity; // 重力・ジャンプ用
 
+    public int PlayerNumber = 1;
+
     void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -39,15 +41,24 @@ public class SimpleCharacterController : MonoBehaviour
             if (Keyboard.current != null)
             {
                 // Qキー または 下矢印 を「押した瞬間」だけ true
-                if (Keyboard.current.qKey.wasPressedThisFrame || Keyboard.current.downArrowKey.wasPressedThisFrame)
+                if (Keyboard.current.qKey.wasPressedThisFrame && PlayerNumber == 1)
                 {
                     dashInput = true;
                 }
 
-                // スペースキー
-                if (Keyboard.current.spaceKey.wasPressedThisFrame)
+                if (Keyboard.current.rKey.wasPressedThisFrame && PlayerNumber == 2)
                 {
-                    jumpInput = true;
+                    dashInput = true;
+                }
+
+                if (Keyboard.current.uKey.wasPressedThisFrame && PlayerNumber == 3)
+                {
+                    dashInput = true;
+                }
+
+                if (Keyboard.current.pKey.wasPressedThisFrame && PlayerNumber == 4)
+                {
+                    dashInput = true;
                 }
             }
 
