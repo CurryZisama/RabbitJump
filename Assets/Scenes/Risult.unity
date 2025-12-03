@@ -132,7 +132,6 @@ GameObject:
   - component: {fileID: 234076858}
   - component: {fileID: 234076857}
   - component: {fileID: 234076862}
-  - component: {fileID: 234076861}
   m_Layer: 0
   m_Name: 4P
   m_TagString: Untagged
@@ -225,7 +224,7 @@ Transform:
   m_GameObject: {fileID: 234076856}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 12}
+  m_LocalPosition: {x: 4.15, y: 0.35, z: 12.53}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -234,24 +233,6 @@ Transform:
   - {fileID: 1091399589}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
---- !u!114 &234076861
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 234076856}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfbc951aa1041264e94b8d20fc2c2b0a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dashSpeed: 8
-  brakePower: 15
-  jumpPower: 5
-  gravity: 5
-  animator: {fileID: 0}
-  PlayerNumber: 4
 --- !u!143 &234076862
 CharacterController:
   m_ObjectHideFlags: 0
@@ -363,13 +344,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.043619405, y: 0, z: 0, w: 0.9990483}
+  m_LocalRotation: {x: -0.12940958, y: 0.12940949, z: 0.017037088, w: 0.98296297}
   m_LocalPosition: {x: 0, y: 1, z: 7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -5, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -15, y: 15, z: 0}
 --- !u!114 &330585547
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -537,7 +518,6 @@ GameObject:
   - component: {fileID: 389843604}
   - component: {fileID: 389843603}
   - component: {fileID: 389843608}
-  - component: {fileID: 389843607}
   m_Layer: 0
   m_Name: 3P
   m_TagString: Untagged
@@ -630,7 +610,7 @@ Transform:
   m_GameObject: {fileID: 389843602}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 12}
+  m_LocalPosition: {x: -2.02, y: 1.215, z: 13}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -639,24 +619,6 @@ Transform:
   - {fileID: 522750155}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
---- !u!114 &389843607
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 389843602}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfbc951aa1041264e94b8d20fc2c2b0a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dashSpeed: 8
-  brakePower: 15
-  jumpPower: 5
-  gravity: 20
-  animator: {fileID: 0}
-  PlayerNumber: 3
 --- !u!143 &389843608
 CharacterController:
   m_ObjectHideFlags: 0
@@ -682,6 +644,63 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1 &401831922
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 401831924}
+  - component: {fileID: 401831923}
+  m_Layer: 0
+  m_Name: ResultColor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &401831923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 401831922}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6d130d6a40324ed4a85f25dbd8a7c86d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerColors:
+  - {r: 0.31136513, g: 1, b: 0.27735847, a: 0}
+  - {r: 1, g: 0.34349975, b: 0.2320754, a: 0}
+  - {r: 0.216981, g: 0.216981, b: 1, a: 0}
+  - {r: 1, g: 0.9283094, b: 0.27735847, a: 0}
+  rankObjects:
+  - {fileID: 1033583886}
+  - {fileID: 1750101198}
+  - {fileID: 389843604}
+  - {fileID: 234076858}
+  jumpHeight: 1
+  jumpDuration: 0.5
+  debugOnStart: 1
+--- !u!4 &401831924
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 401831922}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 3.5807648, y: 0.34142548, z: 11.42736}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -837,7 +856,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 249}
+  m_AnchoredPosition: {x: -380, y: 390}
   m_SizeDelta: {x: 1000, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &423901491
@@ -860,10 +879,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: RE
+  m_text: "\u30EA\u30B6\u30EB\u30C8"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: d176a72725f84e049ab9965fb898becc, type: 2}
+  m_sharedMaterial: {fileID: 3722352865945449869, guid: d176a72725f84e049ab9965fb898becc, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -897,7 +916,7 @@ MonoBehaviour:
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 0
+  m_characterSpacing: -12.39
   m_wordSpacing: 0
   m_lineSpacing: 0
   m_lineSpacingMax: 0
@@ -1510,7 +1529,6 @@ GameObject:
   - component: {fileID: 1033583886}
   - component: {fileID: 1033583885}
   - component: {fileID: 1033583890}
-  - component: {fileID: 1033583889}
   m_Layer: 0
   m_Name: 1P
   m_TagString: Untagged
@@ -1603,7 +1621,7 @@ Transform:
   m_GameObject: {fileID: 1033583884}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 12}
+  m_LocalPosition: {x: 0, y: 2.29, z: 12.96}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1612,24 +1630,6 @@ Transform:
   - {fileID: 331065459}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
---- !u!114 &1033583889
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1033583884}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfbc951aa1041264e94b8d20fc2c2b0a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dashSpeed: 8
-  brakePower: 15
-  jumpPower: 5
-  gravity: 20
-  animator: {fileID: 0}
-  PlayerNumber: 1
 --- !u!143 &1033583890
 CharacterController:
   m_ObjectHideFlags: 0
@@ -2431,7 +2431,6 @@ GameObject:
   - component: {fileID: 1750101198}
   - component: {fileID: 1750101197}
   - component: {fileID: 1750101202}
-  - component: {fileID: 1750101201}
   m_Layer: 0
   m_Name: 2P
   m_TagString: Untagged
@@ -2524,7 +2523,7 @@ Transform:
   m_GameObject: {fileID: 1750101196}
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 12}
+  m_LocalPosition: {x: 2.33, y: 1.78, z: 13.11}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2533,24 +2532,6 @@ Transform:
   - {fileID: 2033572942}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
---- !u!114 &1750101201
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1750101196}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfbc951aa1041264e94b8d20fc2c2b0a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dashSpeed: 8
-  brakePower: 15
-  jumpPower: 5
-  gravity: 20
-  animator: {fileID: 0}
-  PlayerNumber: 2
 --- !u!143 &1750101202
 CharacterController:
   m_ObjectHideFlags: 0
@@ -3169,3 +3150,4 @@ SceneRoots:
   - {fileID: 541187719}
   - {fileID: 875736384}
   - {fileID: 2002678758}
+  - {fileID: 401831924}
