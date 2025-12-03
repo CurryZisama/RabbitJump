@@ -565,7 +565,7 @@ GameObject:
   - component: {fileID: -6288677877520023031}
   m_Layer: 0
   m_Name: Hito
-  m_TagString: Untagged
+  m_TagString: hito
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
