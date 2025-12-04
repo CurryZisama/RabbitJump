@@ -3,39 +3,43 @@ using UnityEngine;
 public class tekimoveCO : MonoBehaviour
 {
     [Header("移動設定")]
-    [Tooltip("移動速度 (1秒間に進む距離)")]
+    [Tooltip("移動速度 (マイナスにすると左に進みます)")]
     public float moveSpeed = 5.0f;
 
     [Header("消滅設定")]
     [Tooltip("このX座標を超えたら消去する")]
     public float destroyPosX = 20.0f;
 
-    // --- 追加修正: 開始時に向きを調整 ---
     void Start()
     {
-        // キャラクターの「正面（Z軸）」を、進行方向である「右（X軸）」に向けます。
-        // これにより、カニ歩きではなく前を向いて歩くようになります。
-        transform.rotation = Quaternion.LookRotation(Vector3.right);
+        // ★修正1: 速度のプラスマイナスで向く方向を変える
+        // 正なら右(Vector3.right)、負なら左(Vector3.left)を向く
+        Vector3 facingDir = (moveSpeed >= 0) ? Vector3.right : Vector3.left;
+        transform.rotation = Quaternion.LookRotation(facingDir);
     }
 
     void Update()
     {
-        // ---------------------------------------------------------
         // 1. 移動処理
-        // ---------------------------------------------------------
-        // Vector3.right は (1, 0, 0) を意味します。
-        // Space.Worldを指定することで、オブジェクトの回転に関わらず
-        // ワールド座標の「右（+X）」へ移動します。
         transform.Translate(Vector3.right * moveSpeed * Time.deltaTime, Space.World);
 
-        // ---------------------------------------------------------
         // 2. 画面外での消去処理
-        // ---------------------------------------------------------
-        // 現在のX座標が、設定した消去ラインを超えたら
-        if (transform.position.x > destroyPosX)
+        // ★修正2: 速度の向きによって判定条件を逆にする
+        if (moveSpeed > 0)
         {
-            // 自分自身をゲームから削除する
-            Destroy(gameObject);
+            // 右へ進む場合：指定ラインより「大きく」なったら消す
+            if (transform.position.x > destroyPosX)
+            {
+                Destroy(gameObject);
+            }
+        }
+        else
+        {
+            // 左へ進む場合：指定ラインより「小さく」なったら消す
+            if (transform.position.x < destroyPosX)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }
