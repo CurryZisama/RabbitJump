@@ -60,24 +60,51 @@ public class SimpleCharacterController : MonoBehaviour
             rb.useGravity = false;
         }
 
-        // 自分のレンダラー（見た目）を取得して、元の色を覚えておく
-        myRenderers = GetComponentsInChildren<Renderer>();
+        // ★修正: GetComponentsInChildren (子含む全て) ではなく GetComponent (自分のみ) に変更
+        // これでスクリプトがついているオブジェクト（体）だけが対象になります
+        Renderer myRenderer = GetComponent<Renderer>();
+        if (myRenderer != null)
+        {
+            myRenderers = new Renderer[] { myRenderer };
+        }
+        else
+        {
+            // レンダラーがない場合のエラー回避
+            myRenderers = new Renderer[0];
+        }
+
+        // プレイヤー番号に応じた色を適用する
+        Color myColor = Color.white;
+        bool shouldChangeColor = false;
+
+        switch (PlayerNumber)
+        {
+            case 1: ColorUtility.TryParseHtmlString("#4FFF47", out myColor); shouldChangeColor = true; break; // 黄緑
+            case 2: ColorUtility.TryParseHtmlString("#FF583B", out myColor); shouldChangeColor = true; break; // 赤橙
+            case 3: ColorUtility.TryParseHtmlString("#3737FF", out myColor); shouldChangeColor = true; break; // 青
+            case 4: ColorUtility.TryParseHtmlString("#FFED47", out myColor); shouldChangeColor = true; break; // 黄
+        }
+
         foreach (var r in myRenderers)
         {
             if (r is ParticleSystemRenderer) continue;
 
-            // ★修正：プロパティ名の判定をやめ、単純にmaterial.colorを取得・保存する
-            // 多くのシェーダーで標準的に色が取れます
+            // 色変更が有効なら、今の色をプレイヤーカラーに変更する
+            if (shouldChangeColor)
+            {
+                r.material.color = myColor;
+            }
+
+            // プロパティ名の判定をやめ、単純にmaterial.colorを取得・保存する
             if (!originalColors.ContainsKey(r))
             {
-                // エラー回避のため、念のためTry-Catchで囲む（色が取れないマテリアル対策）
                 try
                 {
+                    // ここで保存される色は、上記で変更された後の色（プレイヤーカラー）になります
                     originalColors.Add(r, r.material.color);
                 }
                 catch
                 {
-                    // 色プロパティがない場合は白などを仮に入れておくか無視する
                     originalColors.Add(r, Color.white);
                 }
             }
@@ -116,7 +143,7 @@ public class SimpleCharacterController : MonoBehaviour
             // --- 3. 連打移動ロジック（加算式に変更） ---
             if (dashInput)
             {
-                // ★修正：速度を上書き(=)ではなく、加算(+=)して連打の恩恵を作る
+                // 速度を上書き(=)ではなく、加算(+=)して連打の恩恵を作る
                 currentBackwardSpeed += dashSpeed;
 
                 // 最高速度を超えないように制限
@@ -182,7 +209,6 @@ public class SimpleCharacterController : MonoBehaviour
                 Renderer r = kvp.Key;
                 Color originalCol = kvp.Value;
 
-                // ★修正：単純に .color プロパティへ代入する
                 r.material.color = useStunColor ? stunColor : originalCol;
             }
 

@@ -1,55 +1,94 @@
 using UnityEngine;
-using System.Collections.Generic; // List���g�����߂ɕK�v
-
-// ���ǉ��F�Q�[�����ʁi���ʁj���V�[���Ԃŋ��L�E�ێ����邽�߂̃N���X
-// ������`���邱�ƂŁA���̃X�N���v�g����́uGameResultData���Ȃ��v�Ƃ����G���[�������܂�
+using System.Collections.Generic;
+using UnityEngine.SceneManagement; // シーン遷移に必要
 
 public class GoalManager : MonoBehaviour
 {
-    [Header("�S�[����")]
-    [Tooltip("�S�[�������v���C���[�ԍ������Ԃɒǉ�����܂��i�C���X�y�N�^�[�m�F�p�j")]
+    [Header("設定")]
+    [Tooltip("シーン遷移管理スクリプト（ヒエラルキーにあるSceneFlowManagerをセット）")]
+    [SerializeField] private SceneFlowManager sceneFlowManager;
+
+    [Tooltip("リザルトシーン名（SceneFlowManagerを使わない場合に使用）")]
+    [SerializeField] private string resultSceneName = "Risult";
+
+    [Header("ゴール状況")]
+    [Tooltip("ゴールした順にプレイヤー番号が追加されます")]
     public List<int> finishedRanking = new List<int>();
 
-    // �Q�[���J�n���Ƀf�[�^�����Z�b�g
+    // ゲーム開始時にデータをリセット
     void Start()
     {
-        // �O��̃Q�[�����ʂ��c���Ă���Ƃ����Ȃ��̂ŃN���A����
-        GameResultData.FinalRank.Clear();
+        // エラー対策: GameResultData.FinalRank が null の場合は新しく作成
+        if (GameResultData.FinalRank == null)
+        {
+            GameResultData.FinalRank = new List<int>();
+        }
+        else
+        {
+            GameResultData.FinalRank.Clear();
+        }
+
         finishedRanking.Clear();
     }
 
-    // �Փ˔���iTrigger�j
+    // 衝突判定 (Trigger)
     void OnTriggerEnter(Collider other)
     {
-        // �Ԃ��������肪 SimpleCharacterController �������Ă��邩�m�F
+        // ぶつかった相手が SimpleCharacterController を持っているか確認
         SimpleCharacterController player = other.GetComponent<SimpleCharacterController>();
 
         if (player != null)
         {
-            // �v���C���[�ԍ����擾
+            // プレイヤー番号を取得 (例: 1, 2, 3, 4)
             int pNum = player.PlayerNumber;
 
-            // �܂������L���O�Ɋ܂܂�Ă��Ȃ���Βǉ��i��d�S�[���h�~�j
-            // ���[�J���̃��X�g(finishedRanking)�Ŕ���
-            if (!finishedRanking.Contains(pNum))
-            {
-                // 1. ���̃X�N���v�g���̃��X�g�ɒǉ��i�C���X�y�N�^�[�\���p�j
-                finishedRanking.Add(pNum);
+            // プレイヤー番号が 1～4 で来るため、配列のインデックス(0～3)に合わせて -1 します
+            int pNumIndex = pNum - 1;
 
-                // 2. ���ÓI�N���X(GameResultData)�ɂ��ǉ��i���̃V�[���ւ̎󂯓n���p�j
-                GameResultData.FinalRank.Add(pNum);
+            // まだリストに含まれていなければ追加（二重ゴール防止）
+            if (!finishedRanking.Contains(pNumIndex))
+            {
+                finishedRanking.Add(pNumIndex);
 
                 int rank = finishedRanking.Count;
-                Debug.Log($"<color=yellow>Player {pNum} Finished! Rank: {rank}</color>");
+                Debug.Log($"<color=yellow>Player {pNum} (Index:{pNumIndex}) Finished! Rank: {rank}</color>");
 
-                // --- �I�v�V�����F�S�[�������瑀��ł��Ȃ����� ---
-                // �v���C���[�̃X�N���v�g�𖳌������ē����Ȃ�����ꍇ
-                player.enabled = false;
+                // 以前あった停止処理（player.enabled = false; など）を削除しました
+                // ゴール後も速度や操作には一切干渉せず、順位検知のみを行います
 
-                // �����������������S�Ɏ~�߂����ꍇ�͈ȉ����ǉ�
-                var rb = player.GetComponent<Rigidbody>();
-                if (rb != null) rb.linearVelocity = Vector3.zero;
+                // ★★★ 4人全員ゴールしたか判定 ★★★
+                if (finishedRanking.Count >= 4)
+                {
+                    GoToResult();
+                }
             }
+        }
+    }
+
+    // リザルト画面へ移動する処理
+    void GoToResult()
+    {
+        Debug.Log("全員ゴールしました！リザルトへ移動します。");
+
+        // 安全策：nullなら作成
+        if (GameResultData.FinalRank == null)
+        {
+            GameResultData.FinalRank = new List<int>();
+        }
+
+        // リストの内容を保存（コピーを作成して渡す）
+        GameResultData.FinalRank = new List<int>(finishedRanking);
+
+        // シーン遷移
+        if (sceneFlowManager != null)
+        {
+            // .ToArray() を付けて配列にして渡す
+            sceneFlowManager.FinishRaceAndGoToResult(GameResultData.FinalRank.ToArray());
+        }
+        else
+        {
+            // 直接遷移する場合
+            SceneManager.LoadScene(resultSceneName);
         }
     }
 }
